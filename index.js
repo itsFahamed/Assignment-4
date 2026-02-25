@@ -133,3 +133,63 @@ const TemplateGenerator = {
         `;
     }
 };
+
+function renderInterviewView(jobs) {
+    interviewSection.innerHTML = jobs.length
+        ? jobs.map(job => TemplateGenerator.createJobCard(job, 'border-green-500', 'text-green-600 border-green-600')).join('')
+        : TemplateGenerator.createEmptyState();
+}
+
+function renderRejectedView(jobs) {
+    rejectedSection.innerHTML = jobs.length
+        ? jobs.map(job => TemplateGenerator.createJobCard(job, 'border-red-500', 'text-red-600 border-red-600')).join('')
+        : TemplateGenerator.createEmptyState();
+}
+
+const EventHandlers = {
+    handleDelete(card) {
+        const company = card.querySelector('.organization-name').innerText;
+
+        JobUtils.removeJobByCompany(interviewCount, company);
+        JobUtils.removeJobByCompany(rejectedCount, company);
+
+        // Remove all cards in main container matching this company
+        mainContainer.querySelectorAll('.position-card').forEach(c => {
+            if (c.querySelector('.organization-name')?.innerText === company) c.remove();
+        });
+
+        const total = JobUtils.updateCounts();
+        renderInterviewView(interviewCount);
+        renderRejectedView(rejectedCount);
+        jobsCountDisplay.textContent = total;
+    },
+
+    handleInterview(card) {
+        const job = JobUtils.extractJobData(card);
+
+        JobUtils.removeJobByCompany(rejectedCount, job.company);
+        // Guard against duplicates if INTERVIEW is clicked more than once
+        if (JobUtils.findJobIndex(interviewCount, job.company) === -1) {
+            interviewCount.push(job);
+        }
+
+        JobUtils.updateCounts();
+        renderInterviewView(interviewCount);
+        JobUtils.updateCardStatus(job.company, 'interview');
+    },
+
+    handleRejected(card) {
+        const job = JobUtils.extractJobData(card);
+        job.status = 'Rejected';
+
+        JobUtils.removeJobByCompany(interviewCount, job.company);
+        // Guard against duplicates if REJECTED is clicked more than once
+        if (JobUtils.findJobIndex(rejectedCount, job.company) === -1) {
+            rejectedCount.push(job);
+        }
+
+        JobUtils.updateCounts();
+        renderRejectedView(rejectedCount);
+        JobUtils.updateCardStatus(job.company, 'rejected');
+    }
+};
