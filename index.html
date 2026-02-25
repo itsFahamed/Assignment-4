@@ -1,0 +1,432 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Job Application Tracker</title>
+
+    <!-- DaisyUI component library -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+
+    <!-- Tailwind CSS (browser build) -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+    <!-- Google Fonts: Geist -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            font-family: 'Geist', sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ============================================================
+         HEADER — Application title + statistics dashboard
+    ============================================================ -->
+    <header class="bg-base-200 py-6">
+        <div class="max-w-5xl mx-auto px-4">
+
+            <h1 class="text-2xl font-extrabold text-neutral mb-4">Job Application Tracker</h1>
+
+            <!-- Stats: Total / Interview / Rejected -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+
+                <div class="stats-card bg-base-100 p-4 rounded-lg shadow-sm" data-stat-type="total">
+                    <div class="text-sm text-gray-500">Total</div>
+                    <div class="text-2xl font-bold text-neutral mt-1">
+                        <span class="counter" data-counter="total">8</span>
+                    </div>
+                </div>
+
+                <div class="stats-card bg-base-100 p-4 rounded-lg shadow-sm" data-stat-type="interview">
+                    <div class="text-sm text-gray-500">Interview</div>
+                    <div class="text-2xl font-bold text-neutral mt-1">
+                        <span class="counter" data-counter="interview">0</span>
+                    </div>
+                </div>
+
+                <div class="stats-card bg-base-100 p-4 rounded-lg shadow-sm" data-stat-type="rejected">
+                    <div class="text-sm text-gray-500">Rejected</div>
+                    <div class="text-2xl font-bold text-neutral mt-1">
+                        <span class="counter" data-counter="rejected">0</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+    <!-- ============================================================
+         MAIN — Filters, filtered result sections, job listings
+    ============================================================ -->
+    <main class="max-w-5xl mx-auto px-4 py-6">
+
+        <!-- Section header: title + job count + filter controls -->
+        <section class="jobs-section-header">
+
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-semibold">Available Jobs</h2>
+                <div class="text-sm text-gray-500">
+                    <span class="jobs-count">8</span> jobs
+                </div>
+            </div>
+
+            <!-- Filter navigation -->
+            <nav class="filter-controls flex items-center gap-3 mb-6"
+                 role="navigation"
+                 aria-label="Job filters">
+
+                <button id="filter-all"
+                        class="filter-btn btn btn-primary btn-sm"
+                        data-filter="all"
+                        onclick="setActiveButton('filter-all')">
+                    All
+                </button>
+
+                <button id="filter-interview"
+                        class="filter-btn btn btn-outline btn-sm"
+                        data-filter="interview"
+                        onclick="setActiveButton('filter-interview')">
+                    Interview
+                </button>
+
+                <button id="filter-rejected"
+                        class="filter-btn btn btn-outline btn-sm"
+                        data-filter="rejected"
+                        onclick="setActiveButton('filter-rejected')">
+                    Rejected
+                </button>
+
+            </nav>
+        </section>
+
+        <!-- Filtered result containers (populated + shown dynamically by JS) -->
+        <section class="filtered-results interview-results space-y-4 mb-6"
+                 data-filter-section="interview"
+                 style="display: none;">
+        </section>
+
+        <section class="filtered-results rejected-results space-y-4 mb-6"
+                 data-filter-section="rejected"
+                 style="display: none;">
+        </section>
+
+        <!-- --------------------------------------------------------
+             Job listings
+        -------------------------------------------------------- -->
+        <section class="position-listing" data-section="positions-container">
+            <div class="positions-grid space-y-4">
+
+                <!-- Job Card: Google DeepMind -->
+                <article class="position-card bg-base-100 rounded-lg shadow p-6 relative"
+                         data-status="not-applied"
+                         data-position-id="pos-001">
+
+                    <button class="position-action remove-action absolute top-4 right-4 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                            data-action="delete"
+                            aria-label="Delete job application">
+                        <img src="assets/delete.png" alt="Delete" class="h-5 w-5">
+                    </button>
+
+                    <header class="position-header">
+                        <h3 class="organization-name text-lg font-bold text-neutral">Google DeepMind</h3>
+                        <p class="position-title text-sm text-gray-600">Machine Learning Engineer</p>
+                        <p class="position-details text-xs text-gray-500 mt-1">London, UK • Full-time • $170,000 - $220,000</p>
+                    </header>
+
+                    <div class="position-status-container mt-3">
+                        <span class="position-status badge badge-outline text-blue-600 border-blue-600 text-xs">NOT APPLIED</span>
+                    </div>
+
+                    <div class="position-description text-sm text-gray-700 mt-3">
+                        Research and develop state-of-the-art machine learning models for real-world AI applications. Strong background in PyTorch, TensorFlow, and reinforcement learning required.
+                    </div>
+
+                    <footer class="position-actions flex gap-2 mt-4">
+                        <button class="position-action interview-action btn btn-sm btn-outline border-green-500 text-green-600 hover:bg-green-50"
+                                data-action="interview">
+                            INTERVIEW
+                        </button>
+                        <button class="position-action rejected-action btn btn-sm btn-outline border-red-500 text-red-600 hover:bg-red-50"
+                                data-action="rejected">
+                            REJECTED
+                        </button>
+                    </footer>
+                </article>
+
+                <!-- Job Card: Stripe -->
+                <article class="position-card bg-base-100 rounded-lg shadow p-6 relative"
+                         data-status="not-applied"
+                         data-position-id="pos-002">
+
+                    <button class="position-action remove-action absolute top-4 right-4 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                            data-action="delete"
+                            aria-label="Delete job application">
+                        <img src="assets/delete.png" alt="Delete" class="h-5 w-5">
+                    </button>
+
+                    <header class="position-header">
+                        <h3 class="organization-name text-lg font-bold text-neutral">Stripe</h3>
+                        <p class="position-title text-sm text-gray-600">Backend Software Engineer</p>
+                        <p class="position-details text-xs text-gray-500 mt-1">Remote • Full-time • $155,000 - $200,000</p>
+                    </header>
+
+                    <div class="position-status-container mt-3">
+                        <span class="position-status badge badge-outline text-blue-600 border-blue-600 text-xs">NOT APPLIED</span>
+                    </div>
+
+                    <div class="position-description text-sm text-gray-700 mt-3">
+                        Build and scale payment infrastructure handling billions of transactions. Expertise in distributed systems, Ruby or Go, and high-availability architecture required.
+                    </div>
+
+                    <footer class="position-actions flex gap-2 mt-4">
+                        <button class="position-action interview-action btn btn-sm btn-outline border-green-500 text-green-600 hover:bg-green-50"
+                                data-action="interview">
+                            INTERVIEW
+                        </button>
+                        <button class="position-action rejected-action btn btn-sm btn-outline border-red-500 text-red-600 hover:bg-red-50"
+                                data-action="rejected">
+                            REJECTED
+                        </button>
+                    </footer>
+                </article>
+
+                <!-- Job Card: Figma -->
+                <article class="position-card bg-base-100 rounded-lg shadow p-6 relative"
+                         data-status="not-applied"
+                         data-position-id="pos-003">
+
+                    <button class="position-action remove-action absolute top-4 right-4 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                            data-action="delete"
+                            aria-label="Delete job application">
+                        <img src="assets/delete.png" alt="Delete" class="h-5 w-5">
+                    </button>
+
+                    <header class="position-header">
+                        <h3 class="organization-name text-lg font-bold text-neutral">Figma</h3>
+                        <p class="position-title text-sm text-gray-600">Senior Product Designer</p>
+                        <p class="position-details text-xs text-gray-500 mt-1">San Francisco, CA • Full-time • $130,000 - $175,000</p>
+                    </header>
+
+                    <div class="position-status-container mt-3">
+                        <span class="position-status badge badge-outline text-blue-600 border-blue-600 text-xs">NOT APPLIED</span>
+                    </div>
+
+                    <div class="position-description text-sm text-gray-700 mt-3">
+                        Shape the future of collaborative design tooling. Own end-to-end product experiences, run usability studies, and partner closely with engineering and product teams.
+                    </div>
+
+                    <footer class="position-actions flex gap-2 mt-4">
+                        <button class="position-action interview-action btn btn-sm btn-outline border-green-500 text-green-600 hover:bg-green-50"
+                                data-action="interview">
+                            INTERVIEW
+                        </button>
+                        <button class="position-action rejected-action btn btn-sm btn-outline border-red-500 text-red-600 hover:bg-red-50"
+                                data-action="rejected">
+                            REJECTED
+                        </button>
+                    </footer>
+                </article>
+
+                <!-- Job Card: Vercel -->
+                <article class="position-card bg-base-100 rounded-lg shadow p-6 relative"
+                         data-status="not-applied"
+                         data-position-id="pos-004">
+
+                    <button class="position-action remove-action absolute top-4 right-4 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                            data-action="delete"
+                            aria-label="Delete job application">
+                        <img src="assets/delete.png" alt="Delete" class="h-5 w-5">
+                    </button>
+
+                    <header class="position-header">
+                        <h3 class="organization-name text-lg font-bold text-neutral">Vercel</h3>
+                        <p class="position-title text-sm text-gray-600">Developer Experience Engineer</p>
+                        <p class="position-details text-xs text-gray-500 mt-1">Remote • Full-time • $140,000 - $180,000</p>
+                    </header>
+
+                    <div class="position-status-container mt-3">
+                        <span class="position-status badge badge-outline text-blue-600 border-blue-600 text-xs">NOT APPLIED</span>
+                    </div>
+
+                    <div class="position-description text-sm text-gray-700 mt-3">
+                        Improve the developer experience for thousands of teams deploying on the Vercel platform. Deep knowledge of Next.js, edge runtimes, and CI/CD pipelines preferred.
+                    </div>
+
+                    <footer class="position-actions flex gap-2 mt-4">
+                        <button class="position-action interview-action btn btn-sm btn-outline border-green-500 text-green-600 hover:bg-green-50"
+                                data-action="interview">
+                            INTERVIEW
+                        </button>
+                        <button class="position-action rejected-action btn btn-sm btn-outline border-red-500 text-red-600 hover:bg-red-50"
+                                data-action="rejected">
+                            REJECTED
+                        </button>
+                    </footer>
+                </article>
+
+                <!-- Job Card: Cloudflare -->
+                <article class="position-card bg-base-100 rounded-lg shadow p-6 relative"
+                         data-status="not-applied"
+                         data-position-id="pos-005">
+
+                    <button class="position-action remove-action absolute top-4 right-4 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                            data-action="delete"
+                            aria-label="Delete job application">
+                        <img src="assets/delete.png" alt="Delete" class="h-5 w-5">
+                    </button>
+
+                    <header class="position-header">
+                        <h3 class="organization-name text-lg font-bold text-neutral">Cloudflare</h3>
+                        <p class="position-title text-sm text-gray-600">Network Security Engineer</p>
+                        <p class="position-details text-xs text-gray-500 mt-1">Austin, TX • Hybrid • $150,000 - $195,000</p>
+                    </header>
+
+                    <div class="position-status-container mt-3">
+                        <span class="position-status badge badge-outline text-blue-600 border-blue-600 text-xs">NOT APPLIED</span>
+                    </div>
+
+                    <div class="position-description text-sm text-gray-700 mt-3">
+                        Design and implement security solutions protecting millions of internet properties. Expertise in DDoS mitigation, zero-trust networking, and BGP routing required.
+                    </div>
+
+                    <footer class="position-actions flex gap-2 mt-4">
+                        <button class="position-action interview-action btn btn-sm btn-outline border-green-500 text-green-600 hover:bg-green-50"
+                                data-action="interview">
+                            INTERVIEW
+                        </button>
+                        <button class="position-action rejected-action btn btn-sm btn-outline border-red-500 text-red-600 hover:bg-red-50"
+                                data-action="rejected">
+                            REJECTED
+                        </button>
+                    </footer>
+                </article>
+
+                <!-- Job Card: Notion Labs -->
+                <article class="position-card bg-base-100 rounded-lg shadow p-6 relative"
+                         data-status="not-applied"
+                         data-position-id="pos-006">
+
+                    <button class="position-action remove-action absolute top-4 right-4 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                            data-action="delete"
+                            aria-label="Delete job application">
+                        <img src="assets/delete.png" alt="Delete" class="h-5 w-5">
+                    </button>
+
+                    <header class="position-header">
+                        <h3 class="organization-name text-lg font-bold text-neutral">Notion Labs</h3>
+                        <p class="position-title text-sm text-gray-600">Frontend Engineer</p>
+                        <p class="position-details text-xs text-gray-500 mt-1">New York, NY • Full-time • $135,000 - $170,000</p>
+                    </header>
+
+                    <div class="position-status-container mt-3">
+                        <span class="position-status badge badge-outline text-blue-600 border-blue-600 text-xs">NOT APPLIED</span>
+                    </div>
+
+                    <div class="position-description text-sm text-gray-700 mt-3">
+                        Build rich, performant editor experiences used by millions of knowledge workers. Strong proficiency in React, TypeScript, and browser performance optimization expected.
+                    </div>
+
+                    <footer class="position-actions flex gap-2 mt-4">
+                        <button class="position-action interview-action btn btn-sm btn-outline border-green-500 text-green-600 hover:bg-green-50"
+                                data-action="interview">
+                            INTERVIEW
+                        </button>
+                        <button class="position-action rejected-action btn btn-sm btn-outline border-red-500 text-red-600 hover:bg-red-50"
+                                data-action="rejected">
+                            REJECTED
+                        </button>
+                    </footer>
+                </article>
+
+                <!-- Job Card: Linear -->
+                <article class="position-card bg-base-100 rounded-lg shadow p-6 relative"
+                         data-status="not-applied"
+                         data-position-id="pos-007">
+
+                    <button class="position-action remove-action absolute top-4 right-4 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                            data-action="delete"
+                            aria-label="Delete job application">
+                        <img src="assets/delete.png" alt="Delete" class="h-5 w-5">
+                    </button>
+
+                    <header class="position-header">
+                        <h3 class="organization-name text-lg font-bold text-neutral">Linear</h3>
+                        <p class="position-title text-sm text-gray-600">Full Stack Engineer</p>
+                        <p class="position-details text-xs text-gray-500 mt-1">Remote • Full-time • $145,000 - $185,000</p>
+                    </header>
+
+                    <div class="position-status-container mt-3">
+                        <span class="position-status badge badge-outline text-blue-600 border-blue-600 text-xs">NOT APPLIED</span>
+                    </div>
+
+                    <div class="position-description text-sm text-gray-700 mt-3">
+                        Work on a fast, keyboard-first issue tracker loved by engineering teams worldwide. Experience with React, Node.js, PostgreSQL, and obsessive attention to product quality required.
+                    </div>
+
+                    <footer class="position-actions flex gap-2 mt-4">
+                        <button class="position-action interview-action btn btn-sm btn-outline border-green-500 text-green-600 hover:bg-green-50"
+                                data-action="interview">
+                            INTERVIEW
+                        </button>
+                        <button class="position-action rejected-action btn btn-sm btn-outline border-red-500 text-red-600 hover:bg-red-50"
+                                data-action="rejected">
+                            REJECTED
+                        </button>
+                    </footer>
+                </article>
+
+                <!-- Job Card: Supabase -->
+                <article class="position-card bg-base-100 rounded-lg shadow p-6 relative"
+                         data-status="not-applied"
+                         data-position-id="pos-008">
+
+                    <button class="position-action remove-action absolute top-4 right-4 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                            data-action="delete"
+                            aria-label="Delete job application">
+                        <img src="assets/delete.png" alt="Delete" class="h-5 w-5">
+                    </button>
+
+                    <header class="position-header">
+                        <h3 class="organization-name text-lg font-bold text-neutral">Supabase</h3>
+                        <p class="position-title text-sm text-gray-600">Database Engineer</p>
+                        <p class="position-details text-xs text-gray-500 mt-1">Remote • Full-time • $130,000 - $170,000</p>
+                    </header>
+
+                    <div class="position-status-container mt-3">
+                        <span class="position-status badge badge-outline text-blue-600 border-blue-600 text-xs">NOT APPLIED</span>
+                    </div>
+
+                    <div class="position-description text-sm text-gray-700 mt-3">
+                        Contribute to the open-source Firebase alternative built on PostgreSQL. Deep knowledge of Postgres internals, row-level security, and real-time data sync systems required.
+                    </div>
+
+                    <footer class="position-actions flex gap-2 mt-4">
+                        <button class="position-action interview-action btn btn-sm btn-outline border-green-500 text-green-600 hover:bg-green-50"
+                                data-action="interview">
+                            INTERVIEW
+                        </button>
+                        <button class="position-action rejected-action btn btn-sm btn-outline border-red-500 text-red-600 hover:bg-red-50"
+                                data-action="rejected">
+                            REJECTED
+                        </button>
+                    </footer>
+                </article>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- JavaScript module -->
+    <script src="index.js"></script>
+
+</body>
+
+</html>
