@@ -256,3 +256,22 @@ const FilterManager = {
             : `${count}`;
     }
 };
+
+// Called from HTML onclick on each filter button
+function setActiveButton(id) {
+    const total = getPositionsGridCount();
+    FilterManager.applyButtonStyles(id);
+
+    if (id === 'filter-all') {
+        FilterManager.setSectionVisibility(true, false, false);
+        FilterManager.setJobCountDisplay(total);
+    } else if (id === 'filter-interview') {
+        FilterManager.setSectionVisibility(false, true, false);
+        renderInterviewView(interviewCount);
+        FilterManager.setJobCountDisplay(interviewCount.length, total);
+    } else if (id === 'filter-rejected') {
+        FilterManager.setSectionVisibility(false, false, true);
+        renderRejectedView(rejectedCount);
+        FilterManager.setJobCountDisplay(rejectedCount.length, total);
+    }
+}
