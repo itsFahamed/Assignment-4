@@ -193,3 +193,66 @@ const EventHandlers = {
         JobUtils.updateCardStatus(job.company, 'rejected');
     }
 };
+
+// Single delegated click listener for all card buttons
+document.addEventListener('click', function (event) {
+    const btn  = event.target.closest('button');
+    if (!btn) return;
+
+    const card = btn.closest('.position-card');
+    if (!card) return;
+
+    const handlers = {
+        delete:    EventHandlers.handleDelete,
+        interview: EventHandlers.handleInterview,
+        rejected:  EventHandlers.handleRejected
+    };
+
+    const handler = handlers[btn.getAttribute('data-action')];
+    if (handler) handler(card);
+});
+
+const FilterManager = {
+    // Button style configs keyed by filter id
+    buttonConfig: {
+        'filter-all': {
+            active:   { backgroundColor: '#3b82f6', color: 'white',       borderColor: '#3b82f6' },
+            inactive: { backgroundColor: 'transparent', color: '#3b82f6', borderColor: '#3b82f6' }
+        },
+        'filter-interview': {
+            active:   { backgroundColor: '#10b981', color: 'white',       borderColor: '#10b981' },
+            inactive: { backgroundColor: 'transparent', color: '#3b82f6', borderColor: '#3b82f6' }
+        },
+        'filter-rejected': {
+            active:   { backgroundColor: '#ef4444', color: 'white',       borderColor: '#ef4444' },
+            inactive: { backgroundColor: 'transparent', color: '#3b82f6', borderColor: '#3b82f6' }
+        }
+    },
+
+    buttonElements: {
+        'filter-all':       filterAllBtn,
+        'filter-interview': filterInterviewBtn,
+        'filter-rejected':  filterRejectedBtn
+    },
+
+    applyButtonStyles(activeId) {
+        Object.entries(this.buttonElements).forEach(([id, btn]) => {
+            const styles = id === activeId
+                ? this.buttonConfig[id].active
+                : this.buttonConfig[id].inactive;
+            Object.assign(btn.style, styles);
+        });
+    },
+
+    setSectionVisibility(showMain, showInterview, showRejected) {
+        mainContainer.style.display    = showMain      ? 'block' : 'none';
+        interviewSection.style.display = showInterview ? 'block' : 'none';
+        rejectedSection.style.display  = showRejected  ? 'block' : 'none';
+    },
+
+    setJobCountDisplay(count, total) {
+        jobsCountDisplay.textContent = total !== undefined
+            ? `${count} out of ${total}`
+            : `${count}`;
+    }
+};
